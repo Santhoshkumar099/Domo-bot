@@ -4,15 +4,17 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+from io import BytesIO
 
 load_dotenv()
+
 # Domo API Credentials
 DOMO_DEVELOPER_TOKEN = os.getenv("DOMO_DEVELOPER_TOKEN")
 API_URL = "https://gwcteq-partner.domo.com/api/ai/v1/text/generation"
 
 # Function to extract text from PDF
-def extract_text_from_pdf(pdf_path):
-    doc = fitz.open(pdf_path)
+def extract_text_from_pdf(uploaded_file):
+    doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")  # Read from BytesIO
     text = ""
     for page in doc:
         text += page.get_text("text") + "\n"
@@ -29,16 +31,8 @@ if uploaded_file is not None:
     if uploaded_file.size > 5 * 1024 * 1024:
         st.error("File size exceeds 5MB limit. Please upload a smaller file.")
     else:
-        # Save uploaded file temporarily
-        temp_pdf_path = "temp_uploaded.pdf"
-        with open(temp_pdf_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-
         # Extract text from PDF
-        pdf_text = extract_text_from_pdf(temp_pdf_path)
-        
-        # Remove the old PDF file to clear memory
-        os.remove(temp_pdf_path)
+        pdf_text = extract_text_from_pdf(uploaded_file)
         
         # Chat input
         user_query = st.text_input("Ask a question based on the PDF content:")
@@ -65,3 +59,4 @@ if uploaded_file is not None:
                 st.success("Response: " + result.get("output", "No response received."))
             else:
                 st.error(f"Error: {response.status_code} - {response.text}")
+
