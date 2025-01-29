@@ -14,7 +14,7 @@ API_URL = "https://gwcteq-partner.domo.com/api/ai/v1/text/generation"
 
 # Function to extract text from PDF
 def extract_text_from_pdf(uploaded_file):
-    doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")  # Read from BytesIO
+    doc = fitz.open(stream=uploaded_file.read(), filetype="pdf") 
     pages = []
     for page_num, page in enumerate(doc):
         page_text = page.get_text("text")
@@ -80,7 +80,7 @@ if uploaded_file is not None:
         if st.session_state.answer:
             st.success(st.session_state.answer)
 
-            # Expander appears **only after the answer is generated**
+            # Expander 
             with st.expander("Expand to view your question in PDF"):
                 found = False  # Flag to check if query matches any page
                 for page in st.session_state.pdf_pages:
