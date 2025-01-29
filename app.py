@@ -56,7 +56,7 @@ if uploaded_file is not None:
             
             if response.status_code == 200:
                 result = response.json()
-                st.success("Response: " + result.get("output", "No response received."))
+                st.success(result.get("output", "No response received."))
             else:
                 st.error(f"Error: {response.status_code} - {response.text}")
 
